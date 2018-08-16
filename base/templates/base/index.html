@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reports</title>
+    <!-- Bootstrap -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js" ></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<!--
+-->
+
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.4/js/mdb.min.js"></script>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Bootstrap core CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+<!-- Material Design Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.4/css/mdb.min.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">REPORTS</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin">Admin</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Dropdown
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#">Disabled</a>
+          </li>
+
+
+        </ul>
+
+        {% if user.is_authenticated %}
+        <ul class="navbar-nav ">
+                        <!-- PROFILE DROPDOWN - scrolling off the page to the right -->
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" id="navDropDownLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{user}}
+                    </a>
+                            <div class="dropdown-menu" aria-labelledby="navDropDownLink">
+                                <a class="dropdown-item" href="/admin/">Preferences</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                            </div>
+                        </li>
+        </ul>
+        {% else %}
+          <p>You are not logged in</p>
+          <a href="{% url 'login' %}">login</a>
+        {% endif %}
+      </div>
+
+    </nav>
+
+  <div class="container">
+
+    <div class="starter-template">
+      <h1>Sales reports</h1>
+
+      <form action="#" method="post"> {% csrf_token %}
+
+          <label for="from">From</label>
+          <input type="text" id="dateFrom" name="from">
+          <label for="to">to</label>
+          <input type="text" id="dateTo" name="to">
+
+          <input type="submit" value="OK">
+      </form>
+
+      <table id="example" class="display" style="width:100%">
+              <thead>
+                  <tr>
+<th>Store Desc</th>
+                    <th>Category</th>
+                    <th>Sales Amount</th>
+                    <th>Date</th>
+
+                  </tr>
+              </thead>
+              <tbody>
+      {% for stock in stock_list %}
+                  <tr>
+<td>{{ stock.store_desc }}</td>
+                      <td>{{ stock.category }}</td>
+
+
+                      <td>{{ stock.sales_amount }}</td>
+                      <td>{{ stock.date }}</td>
+                  </tr>
+      {% endfor %}
+              </tbody>
+              <tfoot>
+            <tr>
+                <th colspan="2" style="text-align:right">Total:</th>
+                <th></th>
+            </tr>
+        </tfoot>
+          </table>
+    </div>
+  </div><!-- /.container -->
+
+  <script>
+  $( function() {
+    var dateFormat = "mm/dd/yy",
+      from = $( "#dateFrom" )
+        .datepicker({
+          defaultDate: "+1w",
+          changeMonth: true,
+          numberOfMonths: 2
+        })
+        .on( "change", function() {
+          to.datepicker( "option", "minDate", getDate( this ) );
+        }),
+      to = $( "#dateTo" ).datepicker({
+        defaultDate: "+1w",
+        changeMonth: true,
+        numberOfMonths: 2
+      })
+      .on( "change", function() {
+        from.datepicker( "option", "maxDate", getDate( this ) );
+      });
+
+    function getDate( element ) {
+      var date;
+      try {
+        date = $.datepicker.parseDate( dateFormat, element.value );
+      } catch( error ) {
+        date = null;
+      }
+
+      return date;
+    }
+  } );
+  </script>
+
+  <script>
+
+
+  $(document).ready(function() {
+    $('#example').DataTable( {
+            initComplete: function () {
+                this.api().columns().every( function () {
+                    var column = this;
+                    var select = $('<select><option value=""></option></select>')
+                        .appendTo( $(column.header()).empty() )
+                        .on( 'change', function () {
+                            var val = $.fn.dataTable.util.escapeRegex(
+                                $(this).val()
+                            );
+
+                            column
+                                .search( val ? '^'+val+'$' : '', true, false )
+                                .draw();
+                        } );
+
+                    column.data().unique().sort().each( function ( d, j ) {
+                        select.append( '<option value="'+d+'">'+d+'</option>' )
+                    } );
+                } );
+            },
+            "footerCallback": function ( row, data, start, end, display ) {
+                  var api = this.api(), data;
+
+                  // Remove the formatting to get integer data for summation
+                  var intVal = function ( i ) {
+                      return typeof i === 'string' ?
+                          i.replace(/[\$,]/g, '')*1 :
+                          typeof i === 'number' ?
+                              i : 0;
+                  };
+
+                  // Total over all pages
+                  total = api
+                      .column( 2 )
+                      .data()
+                      .reduce( function (a, b) {
+                          return intVal(a) + intVal(b);
+                      }, 0 );
+
+                  // Total over this page
+                  pageTotal = api
+                      .column( 2, { page: 'current'} )
+                      .data()
+                      .reduce( function (a, b) {
+                          return intVal(a) + intVal(b);
+                      }, 0 );
+
+                  // Update footer
+                  $( api.column( 2 ).footer() ).html(
+                      pageTotal +' pcs. ( all pages: '+ total +' pcs)'
+                  );
+              }
+          } );
+        } );
+
+
+</script>
+  </body>
+</html>
